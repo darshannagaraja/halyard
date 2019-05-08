@@ -20,7 +20,7 @@ import com.netflix.spectator.api.Registry;
 import com.netflix.spinnaker.clouddriver.google.security.GoogleNamedAccountCredentials;
 import com.netflix.spinnaker.front50.model.GcsStorageService;
 import com.netflix.spinnaker.front50.model.StorageService;
-import com.netflix.spinnaker.halyard.config.config.v1.secrets.SecretSessionManager;
+import com.netflix.spinnaker.halyard.core.secrets.v1.SecretSessionManager;
 import com.netflix.spinnaker.halyard.config.model.v1.canary.AbstractCanaryAccount;
 import com.netflix.spinnaker.halyard.config.model.v1.canary.google.GoogleCanaryAccount;
 import com.netflix.spinnaker.halyard.config.problem.v1.ConfigProblemSetBuilder;
@@ -29,26 +29,18 @@ import com.netflix.spinnaker.halyard.core.problem.v1.Problem.Severity;
 import com.netflix.spinnaker.halyard.core.tasks.v1.DaemonTaskHandler;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
-import lombok.Setter;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.scheduling.TaskScheduler;
-import org.springframework.stereotype.Component;
 
 @Data
 @EqualsAndHashCode(callSuper = false)
-@Component
 public class GoogleCanaryAccountValidator extends CanaryAccountValidator {
 
-  @Autowired
   private SecretSessionManager secretSessionManager;
 
-  @Setter
   private String halyardVersion;
 
-  @Setter
   private Registry registry;
 
-  @Setter
   TaskScheduler taskScheduler;
 
   private int connectTimeoutSec = 45;

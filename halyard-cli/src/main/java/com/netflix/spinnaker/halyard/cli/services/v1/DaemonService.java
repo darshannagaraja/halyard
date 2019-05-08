@@ -702,7 +702,7 @@ public interface DaemonService {
       @Body Notification notification);
 
   @GET("/v1/config/deployments/{deploymentName}/ci/{ciName}/")
-  DaemonTask<Halconfig, Object> getCi(
+  DaemonTask<Halconfig, Ci> getCi(
       @Path("deploymentName") String deploymentName,
       @Path("ciName") String ciName,
       @Query("validate") boolean validate);
@@ -719,10 +719,10 @@ public interface DaemonService {
       @Path("deploymentName") String deploymentName,
       @Path("ciName") String ciName,
       @Query("validate") boolean validate,
-      @Body Master master);
+      @Body CIAccount account);
 
   @GET("/v1/config/deployments/{deploymentName}/ci/{ciName}/masters/{masterName}/")
-  DaemonTask<Halconfig, Object> getMaster(
+  DaemonTask<Halconfig, CIAccount> getMaster(
       @Path("deploymentName") String deploymentName,
       @Path("ciName") String ciName,
       @Path("masterName") String masterName,
@@ -734,7 +734,7 @@ public interface DaemonService {
       @Path("ciName") String ciName,
       @Path("masterName") String masterName,
       @Query("validate") boolean validate,
-      @Body Master master);
+      @Body CIAccount account);
 
   @DELETE("/v1/config/deployments/{deploymentName}/ci/{ciName}/masters/{masterName}/")
   DaemonTask<Halconfig, Void> deleteMaster(
@@ -742,6 +742,48 @@ public interface DaemonService {
       @Path("ciName") String ciName,
       @Path("masterName") String masterName,
       @Query("validate") boolean validate);
+
+  @GET("/v1/config/deployments/{deploymentName}/repository/{repositoryName}/")
+  DaemonTask<Halconfig, Object> getRepository(
+          @Path("deploymentName") String deploymentName,
+          @Path("repositoryName") String repositoryName,
+          @Query("validate") boolean validate);
+
+  @PUT("/v1/config/deployments/{deploymentName}/repository/{repositoryName}/enabled/")
+  DaemonTask<Halconfig, Void> setRepositoryEnabled(
+          @Path("deploymentName") String deploymentName,
+          @Path("repositoryName") String repositoryName,
+          @Query("validate") boolean validate,
+          @Body boolean enabled);
+
+  @POST("/v1/config/deployments/{deploymentName}/repository/{repositoryName}/searches/")
+  DaemonTask<Halconfig, Void> addSearch(
+          @Path("deploymentName") String deploymentName,
+          @Path("repositoryName") String ciName,
+          @Query("validate") boolean validate,
+          @Body Search search);
+
+  @GET("/v1/config/deployments/{deploymentName}/repository/{repositoryName}/searches/{searchName}/")
+  DaemonTask<Halconfig, Object> getSearch(
+          @Path("deploymentName") String deploymentName,
+          @Path("repositoryName") String repositoryName,
+          @Path("searchName") String searchName,
+          @Query("validate") boolean validate);
+
+  @PUT("/v1/config/deployments/{deploymentName}/repository/{repositoryName}/searches/{searchName}/")
+  DaemonTask<Halconfig, Void> setSearch(
+          @Path("deploymentName") String deploymentName,
+          @Path("repositoryName") String repositoryName,
+          @Path("searchName") String searchName,
+          @Query("validate") boolean validate,
+          @Body Search search);
+
+  @DELETE("/v1/config/deployments/{deploymentName}/repository/{repositoryName}/searches/{searchName}/")
+  DaemonTask<Halconfig, Void> deleteSearch(
+          @Path("deploymentName") String deploymentName,
+          @Path("repositoryName") String repositoryName,
+          @Path("searchName") String searchName,
+          @Query("validate") boolean validate);
 
   @GET("/v1/versions/")
   DaemonTask<Halconfig, Versions> getVersions();

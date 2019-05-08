@@ -17,10 +17,12 @@
 package com.netflix.spinnaker.halyard.deploy.spinnaker.v1.profile;
 
 import com.netflix.spinnaker.halyard.config.model.v1.node.DeploymentConfiguration;
+import com.netflix.spinnaker.halyard.config.model.v1.node.Features;
 import com.netflix.spinnaker.halyard.config.model.v1.security.ApiSecurity;
 import com.netflix.spinnaker.halyard.config.model.v1.security.Security;
 import com.netflix.spinnaker.halyard.deploy.spinnaker.v1.SpinnakerArtifact;
 import com.netflix.spinnaker.halyard.deploy.spinnaker.v1.SpinnakerRuntimeSettings;
+import com.netflix.spinnaker.halyard.deploy.spinnaker.v1.profile.integrations.IntegrationsConfigWrapper;
 import com.netflix.spinnaker.halyard.deploy.spinnaker.v1.service.ServiceSettings;
 import com.netflix.spinnaker.halyard.deploy.spinnaker.v1.service.SpinnakerService.Type;
 import lombok.Data;
@@ -37,19 +39,29 @@ public abstract class GateProfileFactory extends SpringProfileFactory {
   }
 
   @Override
+  public String getMinimumSecretDecryptionVersion(String deploymentName) {
+    return "1.5.3";
+  }
+
+  @Override
   public void setProfile(Profile profile,
       DeploymentConfiguration deploymentConfiguration,
       SpinnakerRuntimeSettings endpoints) {
     super.setProfile(profile, deploymentConfiguration, endpoints);
+
     Security security = deploymentConfiguration.getSecurity();
     List<String> requiredFiles = backupRequiredFiles(security.getApiSecurity(), deploymentConfiguration.getName());
     requiredFiles.addAll(backupRequiredFiles(security.getAuthn(), deploymentConfiguration.getName()));
     requiredFiles.addAll(backupRequiredFiles(security.getAuthz(), deploymentConfiguration.getName()));
     GateConfig gateConfig = getGateConfig(endpoints.getServiceSettings(Type.GATE), security);
     gateConfig.getCors().setAllowedOriginsPattern(security.getApiSecurity());
+    IntegrationsConfigWrapper integrationsConfig = new IntegrationsConfigWrapper(deploymentConfiguration.getFeatures());
+
     profile.appendContents(yamlToString(deploymentConfiguration.getName(), profile, gateConfig))
-        .appendContents(profile.getBaseContents())
-        .setRequiredFiles(requiredFiles);
+            .appendContents(yamlToString(deploymentConfiguration.getName(), profile, integrationsConfig))
+            .appendContents(profile.getBaseContents())
+            .setRequiredFiles(requiredFiles);
+
   }
 
   protected abstract GateConfig getGateConfig(ServiceSettings gate, Security security);

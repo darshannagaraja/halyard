@@ -23,6 +23,7 @@ import com.netflix.spinnaker.halyard.cli.command.v1.GlobalOptions;
 import com.netflix.spinnaker.halyard.config.model.v1.artifacts.ArtifactTemplate;
 import com.netflix.spinnaker.halyard.config.model.v1.canary.AbstractCanaryAccount;
 import com.netflix.spinnaker.halyard.config.model.v1.canary.Canary;
+import com.netflix.spinnaker.halyard.config.model.v1.ci.CiType;
 import com.netflix.spinnaker.halyard.config.model.v1.ha.HaService;
 import com.netflix.spinnaker.halyard.config.model.v1.ha.HaServices;
 import com.netflix.spinnaker.halyard.config.model.v1.node.*;
@@ -489,23 +490,23 @@ public class Daemon {
     };
   }
 
-  public static Supplier<Master> getMaster(String deploymentName, String ciName, String masterName, boolean validate) {
+  public static Supplier<CIAccount> getMaster(String deploymentName, String ciName, String masterName, boolean validate) {
     return () -> {
       Object rawMaster = ResponseUnwrapper.get(getService().getMaster(deploymentName, ciName, masterName, validate));
-      return getObjectMapper().convertValue(rawMaster, Cis.translateMasterType(ciName));
+      return getObjectMapper().convertValue(rawMaster, CiType.getCiType(ciName).accountClass);
     };
   }
 
-  public static Supplier<Void> addMaster(String deploymentName, String ciName, boolean validate, Master master) {
+  public static Supplier<Void> addMaster(String deploymentName, String ciName, boolean validate, CIAccount account) {
     return () -> {
-      ResponseUnwrapper.get(getService().addMaster(deploymentName, ciName, validate, master));
+      ResponseUnwrapper.get(getService().addMaster(deploymentName, ciName, validate, account));
       return null;
     };
   }
 
-  public static Supplier<Void> setMaster(String deploymentName, String ciName, String masterName, boolean validate, Master master) {
+  public static Supplier<Void> setMaster(String deploymentName, String ciName, String masterName, boolean validate, CIAccount account) {
     return () -> {
-      ResponseUnwrapper.get(getService().setMaster(deploymentName, ciName, masterName, validate, master));
+      ResponseUnwrapper.get(getService().setMaster(deploymentName, ciName, masterName, validate, account));
       return null;
     };
   }
@@ -520,13 +521,55 @@ public class Daemon {
   public static Supplier<Ci> getCi(String deploymentName, String ciName, boolean validate) {
     return () -> {
       Object ci = ResponseUnwrapper.get(getService().getCi(deploymentName, ciName, validate));
-      return getObjectMapper().convertValue(ci, Cis.translateCiType(ciName));
+      return getObjectMapper().convertValue(ci, CiType.getCiType(ciName).ciClass);
     };
   }
 
   public static Supplier<Void> setCiEnableDisable(String deploymentName, String ciName, boolean validate, boolean enable) {
     return () -> {
       ResponseUnwrapper.get(getService().setCiEnabled(deploymentName, ciName, validate, enable));
+      return null;
+    };
+  }
+
+  public static Supplier<Repository> getRepository(String deploymentName, String repositoryName, boolean validate) {
+    return () -> {
+      Object repository = ResponseUnwrapper.get(getService().getRepository(deploymentName, repositoryName, validate));
+      return getObjectMapper().convertValue(repository, Repositories.translateReposiroryType(repositoryName));
+    };
+  }
+
+  public static Supplier<Void> setRepositoryEnableDisable(String deploymentName, String repositoryName, boolean validate, boolean enable) {
+    return () -> {
+      ResponseUnwrapper.get(getService().setRepositoryEnabled(deploymentName, repositoryName, validate, enable));
+      return null;
+    };
+  }
+
+  public static Supplier<Search> getSearch(String deploymentName, String repositoryName, String searchName, boolean validate) {
+    return () -> {
+      Object rawSearch = ResponseUnwrapper.get(getService().getSearch(deploymentName, repositoryName, searchName, validate));
+      return getObjectMapper().convertValue(rawSearch, Repositories.translateSearchType(repositoryName));
+    };
+  }
+
+  public static Supplier<Void> addSearch(String deploymentName, String repositoryName, boolean validate, Search search) {
+    return () -> {
+      ResponseUnwrapper.get(getService().addSearch(deploymentName, repositoryName, validate, search));
+      return null;
+    };
+  }
+
+  public static Supplier<Void> setSearch(String deploymentName, String repositoryName, String searchName, boolean validate, Search search) {
+    return () -> {
+      ResponseUnwrapper.get(getService().setSearch(deploymentName, repositoryName, searchName, validate, search));
+      return null;
+    };
+  }
+
+  public static Supplier<Void> deleteSearch(String deploymentName, String repositoryName, String searchName, boolean validate) {
+    return () -> {
+      ResponseUnwrapper.get(getService().deleteSearch(deploymentName, repositoryName, searchName, validate));
       return null;
     };
   }

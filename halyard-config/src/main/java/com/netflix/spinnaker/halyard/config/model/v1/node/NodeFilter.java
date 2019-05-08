@@ -53,15 +53,31 @@ public class NodeFilter implements Cloneable {
     return this;
   }
 
-  public NodeFilter withAnyCi() {
-    matchers.add(Node.thisNodeAcceptor(Cis.class));
-    matchers.add(Node.thisNodeAcceptor(Ci.class));
-    return this;
-  }
-
   public NodeFilter setCi(String name) {
     matchers.add(Node.thisNodeAcceptor(Cis.class));
     matchers.add(Node.namedNodeAcceptor(Ci.class, name));
+    return this;
+  }
+
+  public NodeFilter withAnyRepository() {
+    matchers.add(Node.thisNodeAcceptor(Repositories.class));
+    matchers.add(Node.thisNodeAcceptor(Repository.class));
+    return this;
+  }
+
+  public NodeFilter setRepository(String name) {
+    matchers.add(Node.thisNodeAcceptor(Repositories.class));
+    matchers.add(Node.namedNodeAcceptor(Repository.class, name));
+    return this;
+  }
+
+  public NodeFilter withAnySearch() {
+    matchers.add(Node.thisNodeAcceptor(Search.class));
+    return this;
+  }
+
+  public NodeFilter setSearch(String name) {
+    matchers.add(Node.namedNodeAcceptor(Search.class, name));
     return this;
   }
 
@@ -164,12 +180,12 @@ public class NodeFilter implements Cloneable {
   }
 
   public NodeFilter withAnyMaster() {
-    matchers.add(Node.thisNodeAcceptor(Master.class));
+    matchers.add(Node.thisNodeAcceptor(CIAccount.class));
     return this;
   }
 
   public NodeFilter setMaster(String name) {
-    matchers.add(Node.namedNodeAcceptor(Master.class, name));
+    matchers.add(Node.namedNodeAcceptor(CIAccount.class, name));
     return this;
   }
 

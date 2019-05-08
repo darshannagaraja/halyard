@@ -32,8 +32,6 @@ import com.netflix.spinnaker.halyard.config.model.v1.providers.aws.AwsProvider;
 import com.netflix.spinnaker.halyard.config.model.v1.providers.ecs.EcsProvider;
 import com.netflix.spinnaker.halyard.config.model.v1.providers.google.GoogleProvider;
 import com.netflix.spinnaker.halyard.config.model.v1.providers.kubernetes.KubernetesProvider;
-import com.netflix.spinnaker.halyard.config.model.v1.providers.openstack.OpenstackAccount;
-import com.netflix.spinnaker.halyard.config.model.v1.providers.openstack.OpenstackProvider;
 import com.netflix.spinnaker.halyard.config.model.v1.security.UiSecurity;
 import com.netflix.spinnaker.halyard.config.services.v1.AccountService;
 import com.netflix.spinnaker.halyard.config.services.v1.VersionsService;
@@ -116,6 +114,8 @@ public class DeckProfileFactory extends RegistryBackedProfileFactory {
     bindings.put("features.travis", Boolean.toString(features.getTravis() != null ? features.getTravis() : false));
     bindings.put("features.wercker", Boolean.toString(features.getWercker() != null ? features.getWercker() : false));
     bindings.put("features.managedPipelineTemplatesV2UI", Boolean.toString(features.getManagedPipelineTemplatesV2UI() != null ? features.getManagedPipelineTemplatesV2UI() : false));
+    bindings.put("features.gremlin", Boolean.toString(features.getGremlin() != null ? features.getGremlin() : false));
+    bindings.put("features.infrastructureStages", Boolean.toString(features.getInfrastructureStages() != null ? features.getInfrastructureStages() : false));
 
     // Configure Kubernetes
     KubernetesProvider kubernetesProvider = deploymentConfiguration.getProviders().getKubernetes();
@@ -143,15 +143,6 @@ public class DeckProfileFactory extends RegistryBackedProfileFactory {
     final DCOSProvider dcosProvider = deploymentConfiguration.getProviders().getDcos();
     bindings.put("dcos.default.account", dcosProvider.getPrimaryAccount());
     //TODO(willgorman) need to set the proxy url somehow
-
-    // Configure Openstack
-    OpenstackProvider openstackProvider = deploymentConfiguration.getProviders().getOpenstack();
-    bindings.put("openstack.default.account", openstackProvider.getPrimaryAccount());
-    if (openstackProvider.getPrimaryAccount() != null) {
-      OpenstackAccount openstackAccount = (OpenstackAccount) accountService.getProviderAccount(deploymentConfiguration.getName(), "openstack", openstackProvider.getPrimaryAccount());
-      String firstRegion = openstackAccount.getRegions().get(0);
-      bindings.put("openstack.default.region", firstRegion);
-    }
 
     // Configure AWS
     AwsProvider awsProvider = deploymentConfiguration.getProviders().getAws();

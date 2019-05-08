@@ -4,12 +4,11 @@ dependencies {
   compile spinnaker.dependency('clouddriverKubernetes')
   compile spinnaker.dependency('clouddriverAppengine')
   compile spinnaker.dependency('clouddriverAzure')
-  compile spinnaker.dependency('clouddriverOpenstack')
   compile spinnaker.dependency('clouddriverCloudfoundry')
   compile spinnaker.dependency('front50Gcs')
   compile spinnaker.dependency('front50S3')
-  compile spinnaker.dependency('korkSecrets')
-  compile spinnaker.dependency('korkSecretsAws')
+  compileOnly spinnaker.dependency("lombok")
+  annotationProcessor spinnaker.dependency("lombok")
 
 //  TODO: add clouddriverDCOS once that's merged
   compile project(':halyard-core')
